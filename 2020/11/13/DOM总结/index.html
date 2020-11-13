@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://duzchih.github.io/Blog">
-  <title>Archives: 2020/6 | Dchih</title>
+  <title>DOM总结 | Dchih</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Dchih">
-<meta property="og:url" content="http://duzchih.github.io/Blog/archives/2020/06/index.html">
+  <meta name="description" content="关于 DOM 的一些基本知识总结回顾DOM(Document Objection Modal) 描述了一个层次化的节点树.  1. Node 类型Node 是 DOM1 定义的一个接口,该接口由 DOM 中的所有类型实现(一共12个, 每个节点都有一个 nodeType 属性; nodeName 在 element 类型中与标签名相同) ： Node.ELEMENT_NODE(1); Node.A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DOM总结">
+<meta property="og:url" content="http://duzchih.github.io/Blog/2020/11/13/DOM%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="Dchih">
+<meta property="og:description" content="关于 DOM 的一些基本知识总结回顾DOM(Document Objection Modal) 描述了一个层次化的节点树.  1. Node 类型Node 是 DOM1 定义的一个接口,该接口由 DOM 中的所有类型实现(一共12个, 每个节点都有一个 nodeType 属性; nodeName 在 element 类型中与标签名相同) ： Node.ELEMENT_NODE(1); Node.A">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-13T12:35:03.000Z">
+<meta property="article:modified_time" content="2020-11-13T12:38:58.796Z">
 <meta property="article:author" content="dchih">
+<meta property="article:tag" content="JS高级程序设计">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Dchih" type="application/atom+xml">
@@ -140,60 +145,304 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-DOM总结" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/Blog/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/Blog/2020/06/07/caprices/" class="archive-article-date">
-  	<time datetime="2020-06-06T18:54:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-07</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/Blog/2020/06/07/caprices/">caprices</a>
+    <h1 class="article-title" itemprop="name">
+      DOM总结
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/Blog/2020/11/13/DOM%E6%80%BB%E7%BB%93/" class="archive-article-date">
+  	<time datetime="2020-11-13T12:35:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-13</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="关于-DOM-的一些基本知识总结回顾"><a href="#关于-DOM-的一些基本知识总结回顾" class="headerlink" title="关于 DOM 的一些基本知识总结回顾"></a><center>关于 DOM 的一些基本知识总结回顾</center></h2><h3 id="DOM-Document-Objection-Modal-描述了一个层次化的节点树"><a href="#DOM-Document-Objection-Modal-描述了一个层次化的节点树" class="headerlink" title="DOM(Document Objection Modal) 描述了一个层次化的节点树."></a>DOM(Document Objection Modal) 描述了一个层次化的节点树.</h3></br>
+
+<h4 id="1-Node-类型"><a href="#1-Node-类型" class="headerlink" title="1. Node 类型"></a>1. Node 类型</h4><p>Node 是 DOM1 定义的一个接口,该接口由 DOM 中的所有类型实现(一共12个, 每个节点都有一个 nodeType 属性; nodeName 在 element 类型中与标签名相同) ：</p>
+<pre><code>Node.ELEMENT_NODE(1);
+Node.ATRRIBUTE_NODE(2);
+Node.TEXT_NODE(3);
+Node.CDATA_SECTION_NODE(4);
+Node.ENTITY_REFERENCE_NODE(5);
+Node.ENTITY_NODE(6);
+Node.PROCESSING_INSTRUCTION_NODE(7);
+Node.COMMENT_NODE(8);
+Node.DOCUMENT_NODE(9);
+Node.DOCUMENT_NODE(10);
+Node.DOCUMENT_FRAGMENT_NODE(11);
+Node.NOTATION_NODE(12);</code></pre><p>节点之间都存在着这样或那样的关系.这可以用传统的家族关系来描述, 相当于大文档书比喻成家族谱.<br>每个节点都有一个 childNodes, 他是一个 NodeList 对象, NodeList 是一个类数组对象.在我读这段的时候遇到两个y有关于 childNodes 的陷阱<br>① <strong>childNodes 保存的并不只有 ELEMENT_NODE, 其中还包含 TEXT_NODE.这是因为浏览器实现的时候,把空白符算成了一个文本节点.</strong>  我们可以使用 element.children 来访问 childNodes 包含的元素节点.</p>
+<pre><code>// 类数组转化
+function convertToArray(List) {
+    let arr = new Array();
+    try {
+        arr = Array.prototype.slice.call(List, 0);
+    } catch(e) {
+        for(let i =0; i&lt;List.length; i++) {
+            arr.push(List[i]);
+        }
+    }
+    return arr;
+}
+
+// 过滤非元素节点
+function filterNode (NodeList) {
+    let list = convertToArray(NodeList);   
+    let result = list.filter((elem) =&gt; {
+        if(elem.nodeType == 1) return true;
+    });
+    return result;
+}</code></pre><p>② NodeList 是动态的.所以一下代码会出现死循环</p>
+<pre><code>let father = document.getElementById(&apos;father&apos;);
+let children = father.childNodes;
+for(let i = 0; i &lt; children.length; i++) {
+    let div = document.createElement(&apos;div&apos;);
+    father.appendChild(div);
+}</code></pre><p>这十二个类型中, 我重点关注了 ELEMENT_NODE , 而书上也花了很多篇幅讲了这个类型.<br>我把 ELEMENT_NODE 分为四个要点：  </p>
+<ol>
+<li>HTML元素,每个元素中都包含id,title, className等特性  </li>
+<li>操作特性： getAttribute() setAttribute() removeAttribute(). 通过 getAttribute() 获取 style &amp; 事件处理程序时, 函数返回值是字符串</li>
+<li>创建元素 document.createElement()</li>
+<li>元素的子节点.  IE 和其他浏览器表现不同, 其余浏览器会将空白符算作一个文本节点, 而IE不会</li>
+</ol>
+<h4 id="2-DOM-扩展"><a href="#2-DOM-扩展" class="headerlink" title="2. DOM 扩展"></a>2. DOM 扩展</h4><p>选择符API： querySelector() / querySelectorAll()</p>
+<pre><code>// 取得所有 p 元素中的 strong 元素
+let strong = document.querySelectorAll(&quot;p strong&quot;);
+
+// 取得类为 .selected 的所有元素
+let selected = document.querySelectorAll(&quot;.selected&quot;);</code></pre><p>HTML5 关于 DOM 的一些扩充</p>
+<pre><code>// 取得所有类中包含 username 和 current 的元素, 类名先后顺序无所谓
+// getElementsByClassName() 返回的是数组
+let allCurrentUsername = document.getElementsByClassName(&quot;username current&quot;);
+
+// classList
+// classList 有四个方法操作类： add(value), contains(value), remove(value), toggle(value)
+element.classList.add(&quot;classname&quot;);
+
+// 焦点管理
+document.hasFocus()     // 确认文档是否获得焦点
+document.activeElement  // 当前聚焦的元素
+
+// 自定义属性, 但需要加前缀 data-
+&lt;div id=&quot;myDiv&quot; data-myname=&quot;chih&quot;&gt;
+let div = document.getElementById(&quot;myDiv&quot;);
+let name = div.dataset.myname;
+div.dataset.myname = &apos;Nicholas&apos;;
+if(div.dateset.myname) {
+    console.log(&quot;my name is &quot; + div.dataset.myname);
+}
+
+// innerHTML
+// 操作 innerHTML 之前, 一定要记得先将元素中的事件处理程序解绑
+// 性能： innerHTML &gt; 多次DOM操作
+
+// scrollIntoView()
+element.scrollIntoView();</code></pre><h4 id="3-DOM2-amp-DOM3"><a href="#3-DOM2-amp-DOM3" class="headerlink" title="3. DOM2 &amp; DOM3"></a>3. DOM2 &amp; DOM3</h4><p>DOM2&amp;3 在 DOM1 的基础上增加了更多的交互能力, 也支持了更高级的 XML 特性(XML在此略过)</p>
+<p>① 样式,任何支持 style 特性的元素都有一个对应的 JS style 对象</p>
+<pre><code>let div = document.getElementById(&apos;div&apos;);
+div.style.backgroundColor = &apos;red&apos;;  // 改变 div 的颜色</code></pre><p>② 元素大小, </p>
+<pre><code>// 偏移量 (offset dimension)
+offsetWidth = border * 2 + padding-width * 2 + content-width  // 左右对称的情况
+offsetTop = 元素边框到 offsetParent 的距离
+
+// 客户区大小 (client dimension)
+clientWidth = padding-width * 2 + content   // 左右对称的情况
+
+// 滚动大小 (scroll dimension)
+scrollWidth = 整个文档的宽度
+scrollTop = padding-top 到文档顶端的长度
+
+// 确定元素大小
+element.getBoundingClientRect(); // 返回元素 width, height, top(y), right, bottom, left(x)
+// 跨浏览器兼容
+function getBoundingClientRect (element) {
+
+    let scrollTop = document.documentElement.scrollTop;     // 获取根元素的scrollTop
+    let scrollLeft = document.documentElement.scrollLeft;
+
+    if(element.getBoundingClientRect) {
+        if(typeof argument.callee.offset != &apos;number&apos;) {
+            let div = ducoment.createElement(&apos;div&apos;);
+            div.style.cssText = &apos;position: absolute; left: 0; top: 0;&apos;;
+            document.body.appendChild(div);
+            // 兼容 IE, IE8 将 (2,2) 作为文档左上角坐标
+            argument.callee.offset = -div.getBoundingClientRect().top - scrollTop;
+            document.body.removeChild(div);
+            div = null;
+        }
+        let rect = element.getBoundingClientRect();
+        let offset = argument.callee.offset;
+
+        return {
+            top: rect.top + offset,
+            right: rect.right + offset,
+            bottom: rect.bottom + offset,
+            left: rect.left + offset,
+        }
+    } else {
+        let rectLeft = getElementLeft(element);
+        let rectTop = getElementTop(element);
+
+        return {
+            left: rectLeft - scrollLeft,
+            top: rectTop - scrollTop,
+            right: rectLeft + element.offsetWidth - scrollLeft,
+            bottom: rectTop + element.offsetHeight - scrollTop,
+        }
+    }
+}
+
+function getElementTop (element) {
+    let actualTop = element.offsetTop;
+    let current = element.offsetParent;
+
+    while (current !== null) {
+        actualTop += current.offsetTop;
+        current = current.offsetParent;
+    }
+    return actualTop;
+}</code></pre><p>③ DOM 遍历<br>此处需要提到两个类型: NodeIterator, TreeWalker. 这两个类型用于辅助完成顺序遍历 DOM 结构.<br>NodeIterator 使用 document.createNodeIterator() 创建一个实例:</p>
+<pre><code>// 创建一个只显示p标签的节点迭代器
+let filter = function (node) {
+    return node.tagName.toLowerCase() == &apos;p&apos; ? 
+            NodeFilter.FILTER_ACCEPT :
+            NodeFiliter.FILTER_SKIP;
+}
+let iter = document.createNodeIterator(root, SHOW_ELEMENT, filter, false);
+iter.nextNode();
+iter.previousNode();</code></pre><p>TreeWalker 使用方法与 NodeFilter 类似, 只不过比 NodeFilter 多了几个方法：</p>
+<pre><code>parentNode()    // 
+firstNode()
+lastNode()
+nextSibling()
+previousSibling()</code></pre><center> 完 </center>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">caprices</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JS高级程序设计</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/Blog/categories/JS//" class="article-tag-list-link color3">JS</a>
+        		</li>
+      		
+		</ul>
+	</div>
 
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://duzchih.github.io/Blog/2020/11/13/DOM%E6%80%BB%E7%BB%93/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-  
-    </div></section>
+
   
 
-    
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
+  
+
+  
+
+  
+
+  
 
 
           </div>
@@ -216,8 +465,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
@@ -282,7 +531,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">caprices</a>
+                <a href="javascript:void(0)" class="js-tag color4">JS高级程序设计</a>
               </li>
             
             <div class="clearfix"></div>

@@ -142,6 +142,220 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-PromiseObject" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Blog/2020/12/30/PromiseObject/">PromiseObject</a>
+    </h1>
+  
+
+        
+        <a href="/Blog/2020/12/30/PromiseObject/" class="archive-article-date">
+  	<time datetime="2020-12-30T04:27:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Promise-链式调用实现心得"><a href="#Promise-链式调用实现心得" class="headerlink" title="Promise 链式调用实现心得"></a><center>Promise 链式调用实现心得</center></h2><p>感谢分享 :<br><a href="https://juejin.cn/post/6844904094079926286" target="_blank" rel="noopener">原文链接1: 最简实现Promise，支持异步链式调用（20行）</a><br><a href="https://juejin.cn/post/6844904096525189128#heading-12" target="_blank" rel="noopener">原文链接2: 9k字 | Promise/async/Generator实现原理解析</a>  </p>
+<p>参考链接:<br><a href="https://es6.ruanyifeng.com/#docs/promise" target="_blank" rel="noopener">原文链接3: 阮一峰ES6标准入门–Promise对象</a><br><a href="https://es6.ruanyifeng.com/#docs/function#%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0" target="_blank" rel="noopener">原文链接4: 阮一峰ES6标准入门–箭头函数</a><br><a href="https://promisesaplus.com/" target="_blank" rel="noopener">原文链接5: Promises/A+</a>  </p>
+<h3 id="1-Promise使用方法"><a href="#1-Promise使用方法" class="headerlink" title="1. Promise使用方法"></a>1. Promise使用方法</h3><p>根据 Promises/A+ 规范规定, Promise 包含一个异步操作的最终结果, Promise 主要交互方式是通过它的 <strong>then</strong> 方法. </p>
+<pre><code>const promise = new Promise(function (resolve, reject) {
+    if(/*...*/) {
+        resolve(value);
+    }else {
+        reject(error);
+    }
+})
+
+promise.then(function(resolved, rejected) {
+    // ....
+})</code></pre><p>Promise 回调中, 我们会把结果通过 resolve 函数, 作为参数传入 .then 回调函数. 而 .then 函数返回一个 Promise, 从而可以继续调用 Promise</p>
+<h3 id="2-Promise-then"><a href="#2-Promise-then" class="headerlink" title="2. Promise.then"></a>2. Promise.then</h3><p>那么 Promise 具体是如何实现 .then 的链式调用? 先上代码:</p>
+<pre><code>function Promise (fn) {
+    this.cbs = [];
+
+    const resolve = (value) =&gt; {
+        // 处理同步情况
+        setTimeout(() =&gt; {
+            this.data = value;
+            cbs.foreach(cb =&gt; cb(value));
+        })
+    };
+
+    fn(resolve);
+}
+
+Promise.prototype.then = function (Callback) {
+    return new Promise((resolve) =&gt; {
+        // 收集回调
+        this.cbs.push(() =&gt; {
+            let result = Callback(this.data);
+            result instanceof Promise ? result.then(resolve): resolve(result);
+        })
+    })
+}</code></pre><p>这只是实现了 .then 链式调用最基本的部分. 有注释的两个地方是重点需要注意的. 第一个注释的地方加了一个 setTimeout, 这是为了处理用户在使用 resolve 的时候是同步的情况. 另外我在别人博客下面还看到一种情况: </p>
+<pre><code>const p = new Promise(function(resolve, reject) {
+    resolve(111);
+})
+
+setTimeout(() =&gt; {
+    p.then(data =&gt; console.log(data));
+})</code></pre><p>这种情况上面的代码也是处理不了的, 幸而我在<a href="https://juejin.cn/post/6844904096525189128#heading-12" target="_blank" rel="noopener">这篇</a> 文章里边找到了答案. 其实就是上面的 Promise 实现没有状态. 按 Promise/A+ 描述, Promise 有 pendding, resolved, rejected 三种状态. 而这三种状态可以作为判断条件来决定上面这种情况下应该如何做–很明显, 上面这种情况 resolve 在 .then 前已经执行, 这说明 Promise 状态已经发生改变, 我们只需传入 resolve 结果, 直接执行 .then 的回调就可以了.  </p>
+<p>第二个注释处需要注意的点是 this 的指向. 这里 this 的指向困扰了我很久, 尤其这里的 this 是箭头函数里边的 this. 于是我回头去查了一下<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Functions/Arrow_functions" target="_blank" rel="noopener">箭头函数</a>和 <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/this" target="_blank" rel="noopener">this</a>, 另外还在<a href="https://www.ruanyifeng.com/blog/2018/06/javascript-this.html" target="_blank" rel="noopener">阮一峰老师博客</a>上找到了关于 this 的另外的角度的讲解. 顺便在这里偏一下题, 总结一下 this:  </p>
+<blockquote>
+<p>1, 在普通函数中的 this 指向调用这个函数的对象<br>2, 在构造函数中的 this 指向这个构造函数的实例对象<br>3, 严格模式下, this 值为 undefined<br>4, 箭头函数不会创建自己的this,它只会从自己的作用域链的上一层继承this  </p>
+</blockquote>
+<p>在查<a href="https://es6.ruanyifeng.com/#docs/function#%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0" target="_blank" rel="noopener">箭头函数</a>的时候遇到一个示例非常不解, 后经多方查阅得到解答, 也在此分享出来:  </p>
+<pre><code>function foo() {
+    setTimeout(() =&gt; {
+        console.log(&apos;id:&apos;, this.id);
+    }, 100);
+}
+
+var id = 21;
+
+foo.call({ id: 42 });
+// id: 42</code></pre><p>因为箭头函数本身不会创建自己的 this , 所以箭头函数里边的 this 会指向沿作用域链向外查找. 本例中 this 会找到 foo , 而 foo 被绑定在 {id: 42}, foo 的 this 是指向 {id: 42}的, 所以控制台会输出 42. 当我们将定时器里第一个参数换成普通函数: </p>
+<pre><code>function foo() [
+    setTimeout(function() {
+        console.log(&apos;id: &apos;, this.id);
+    }, 100)
+]</code></pre><p>此时 this 是指向 window 对象, 为什么? 我的理解是定时器里边的匿名函数没有显式的调用者, 于是我们可以认为他的执行环境是在全局环境下. 再看另一个例子: </p>
+<pre><code>function Person() {
+    // Person() 构造函数定义 `this`作为它自己的实例.
+    this.age = 0;
+
+    setInterval(function growUp() {
+        // 与在 Person()构造函数中定义的 `this`并不相同.
+        this.age++;
+    }, 1000);
+}
+
+var p = new Person();</code></pre><p>Person 中的 this 和 growUp 中的 this 并不相同, Person 作为构造函数, 他中间的 this 指向的是实例 p, 而 growUp 执行环境是全局环境, 他里边的 this 是指向 window 对象. 当然, 如何在 growUp 中得到 Person 的 this 就不再本话题讨论了.<br>回到 Promise 的话题, 我们现在知道 then 函数中 this 会指向 Promise 的实例, 而每次调用 then 都会返回不同的 Promise 实例, 那为什么我们还需要在 Promise 中定义 cbs ? 因为用户可能会这样写</p>
+<pre><code>let p = new Promise(...);
+p.then(...);
+p.then(...)</code></pre><p>以上大概就是我在学习Promise链式调用的收获了, 很感谢链接里牛人的分享, 加油!</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">es6-promise</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/Blog/2020/12/30/PromiseObject/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-binarytree" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Blog/2020/11/23/binarytree/">binarytree</a>
+    </h1>
+  
+
+        
+        <a href="/Blog/2020/11/23/binarytree/" class="archive-article-date">
+  	<time datetime="2020-11-23T13:12:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/Blog/2020/11/23/binarytree/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Event" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -164,7 +378,7 @@
       
         <h2 id="关于事件的一些总结"><a href="#关于事件的一些总结" class="headerlink" title="关于事件的一些总结"></a><center>关于事件的一些总结</center></h2><h3 id="1-事件捕获和冒泡"><a href="#1-事件捕获和冒泡" class="headerlink" title="1. 事件捕获和冒泡"></a>1. 事件捕获和冒泡</h3><p>事件捕获和冒泡是事件触发后的不同阶段. 事件捕获是指不大具体的节点更早接收到事件, 最具体的节点应该最后接收到事件. 而事件冒泡则相反. 现代浏览器都支持事件捕获和事件冒泡两种机制. 更常见的, 我们会在冒泡节点对事件进行处理.</p>
 <h3 id="2-事件跨浏览器兼容"><a href="#2-事件跨浏览器兼容" class="headerlink" title="2. 事件跨浏览器兼容"></a>2. 事件跨浏览器兼容</h3><p>说跨浏览器兼容之前, 我们先说一说事件处理程序:</p>
-<h4 id="①-HTML事件处理程序"><a href="#①-HTML事件处理程序" class="headerlink" title="① HTML事件处理程序"></a>① HTML事件处理程序</h4><pre><code>&lt;input type=&quot;button&quot; onclick=&quot;alert(&apos;hello：&apos; + event.type)&quot;&gt;</code></pre><h4 id="②-DOM0级事件处理程序"><a href="#②-DOM0级事件处理程序" class="headerlink" title="② DOM0级事件处理程序"></a>② DOM0级事件处理程序</h4><pre><code>let btn = document.getElementById(&apos;button&apos;);
+<h4 id="①-HTML事件处理程序"><a href="#①-HTML事件处理程序" class="headerlink" title="① HTML事件处理程序"></a>① HTML事件处理程序</h4><pre><code>&lt;input type=&quot;button&quot; onclick=&quot;alert(&apos;hello: &apos; + event.type)&quot;&gt;</code></pre><h4 id="②-DOM0级事件处理程序"><a href="#②-DOM0级事件处理程序" class="headerlink" title="② DOM0级事件处理程序"></a>② DOM0级事件处理程序</h4><pre><code>let btn = document.getElementById(&apos;button&apos;);
 btn.onclick = function (event) {
     alert(&apos;hello: &apos; + event.type);
 }</code></pre><h4 id="③-DOM2级事件处理程序"><a href="#③-DOM2级事件处理程序" class="headerlink" title="③ DOM2级事件处理程序"></a>③ DOM2级事件处理程序</h4><p>在此, IE 与其他浏览器实现不同</p>
@@ -291,8 +505,8 @@ btn.detachEvent(type, handler);</code></pre><h4 id="④-Event对象"><a href="#�
             event.cancleBubble = true;
         }
     }
-}</code></pre><h3 id="3-事件类型-事件类型实在太多，-在此只记录本人用过或者感兴趣的"><a href="#3-事件类型-事件类型实在太多，-在此只记录本人用过或者感兴趣的" class="headerlink" title="3. 事件类型(事件类型实在太多， 在此只记录本人用过或者感兴趣的)"></a>3. 事件类型(事件类型实在太多， 在此只记录本人用过或者感兴趣的)</h3><p>DOM3级事件规定了以下类型: UI事件, 焦点事件, 鼠标事件， 滚轮事件， 键盘事件， 文本事件，合成事件，变动事件.<br>① UI 事件</p>
-<pre><code>// load (当页面加载完后触发, 其中包括图像， JS文件， CSS文件等外部资源)
+}</code></pre><h3 id="3-事件类型-事件类型实在太多-在此只记录本人用过或者感兴趣的"><a href="#3-事件类型-事件类型实在太多-在此只记录本人用过或者感兴趣的" class="headerlink" title="3. 事件类型(事件类型实在太多, 在此只记录本人用过或者感兴趣的)"></a>3. 事件类型(事件类型实在太多, 在此只记录本人用过或者感兴趣的)</h3><p>DOM3级事件规定了以下类型: UI事件, 焦点事件, 鼠标事件, 滚轮事件, 键盘事件, 文本事件,合成事件,变动事件.<br>① UI 事件</p>
+<pre><code>// load (当页面加载完后触发, 其中包括图像, JS文件, CSS文件等外部资源)
 &lt;img src=&quot;smile.gif&quot; id=&quot;image&quot;&gt;
 let image = document.getElementById(&quot;image&quot;);
 EventUtil.addHandler(image, &apos;load&apos;, function (event) {
@@ -303,18 +517,18 @@ EventUtil.addHandler(image, &apos;load&apos;, function (event) {
 document.body.appendChild(image);
 image.src = &apos;smile.gif&apos;;
 
-// resize 事件， 在浏览器窗口宽高发生变化时触发
+// resize 事件, 在浏览器窗口宽高发生变化时触发
 
 // scroll 事件</code></pre><p>② 焦点事件</p>
 <pre><code>// blur 和 focus</code></pre><p>③ 鼠标事件  </p>
-<pre><code>// DOM3 定义了 9 个鼠标事件：click, dblclick, mousedown, mouseup, mouseenter, mounseleave, mouseover, mouseout</code></pre><p><strong>取消鼠标事件将会影响浏览器的默认行为</strong>，因为鼠标事件是有触发顺序的：</p>
+<pre><code>// DOM3 定义了 9 个鼠标事件: click, dblclick, mousedown, mouseup, mouseenter, mounseleave, mouseover, mouseout</code></pre><p><strong>取消鼠标事件将会影响浏览器的默认行为</strong>,因为鼠标事件是有触发顺序的: </p>
 <pre><code>(1) mounsedown
 (2) mouseup
 (3) click
 (4) mousedown
 (5) mouseup
 (6) click
-(7) dblclick</code></pre><p>鼠标事件的 event 会包含鼠标位置的值：</p>
+(7) dblclick</code></pre><p>鼠标事件的 event 会包含鼠标位置的值: </p>
 <pre><code>// 客户区坐标位置(相对于视口的top-left)
 event.clientX/event.clientY
 
@@ -322,16 +536,16 @@ event.clientX/event.clientY
 event.pageX/ event.pageY
 
 // 屏幕坐标位置(相对电脑屏幕计算)
-event.screenX/event.screenY</code></pre><p>鼠标 + 修改键：</p>
-<pre><code>event.shiftKey, event.ctrlKey, event.altKey, event.metaKey</code></pre><p>④ 键盘与文本(键盘事件也支持修改键)<br>键盘事件有三个： keydown, keyup, keypress<br>触发键盘事件后， event 的 keyCode 属性会得到一个值. 对数字字母字符键， keyCode 值与 ASCⅡ 码中对应的编码相同.</p>
-<pre><code>// keypress 触发时，event 对象支持一个 charCode 属性， charCode此时的值就是按下键的 ASCⅡ编码
+event.screenX/event.screenY</code></pre><p>鼠标 + 修改键: </p>
+<pre><code>event.shiftKey, event.ctrlKey, event.altKey, event.metaKey</code></pre><p>④ 键盘与文本(键盘事件也支持修改键)<br>键盘事件有三个:  keydown, keyup, keypress<br>触发键盘事件后, event 的 keyCode 属性会得到一个值. 对数字字母字符键, keyCode 值与 ASCⅡ 码中对应的编码相同.</p>
+<pre><code>// keypress 触发时,event 对象支持一个 charCode 属性, charCode此时的值就是按下键的 ASCⅡ编码
 EventUtil = {
     // ...
     getCharCode: function (event) {
         return typeof event.charCode == &apos;number&apos; ? event.charCode : event.keyCode;
     }
-}</code></pre><h3 id="4-事件委托"><a href="#4-事件委托" class="headerlink" title="4. 事件委托"></a>4. 事件委托</h3><p>① 内存和性能： 在JS中， 添加到页面的事件处理程序数量直接关系到页面的性能。原因有二： 其一， 函数都是对象， 会占用内存， 内存中对象越多，性能越差;  其二, 指定事件处理程序时的DOM访问导致性能变差。</p>
-<p>② 事件委托：事件委托可以对上述两个问题进行优化</p>
+}</code></pre><h3 id="4-事件委托"><a href="#4-事件委托" class="headerlink" title="4. 事件委托"></a>4. 事件委托</h3><p>① 内存和性能:  在JS中, 添加到页面的事件处理程序数量直接关系到页面的性能.原因有二:  其一, 函数都是对象, 会占用内存, 内存中对象越多,性能越差;  其二, 指定事件处理程序时的DOM访问导致性能变差.</p>
+<p>② 事件委托: 事件委托可以对上述两个问题进行优化</p>
 <pre><code>&lt;ul id = &quot;myLinks&quot;&gt;
     &lt;li id= &quot;l1&quot;&gt;1&lt;/li&gt;
     &lt;li id= &quot;l2&quot;&gt;3&lt;/li&gt;
@@ -354,7 +568,7 @@ EventUtil.addHandler(list, &apos;click&apos;, function (event) {
         alert(&quot;hi&quot;);
         break;
     }
-})</code></pre><p>我们之所以能够事件委托， 是因为事件的冒泡机制。 事件会一直向上传递到 document 对象， 所以所有的事件触发以后我们都能在最上面的元素中得到处理。</p>
+})</code></pre><p>我们之所以能够事件委托, 是因为事件的冒泡机制. 事件会一直向上传递到 document 对象, 所以所有的事件触发以后我们都能在最上面的元素中得到处理.</p>
 
       
 
@@ -671,7 +885,7 @@ previousSibling()</code></pre><center> 完 </center>
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2020 dchih
+    		&copy; 2021 dchih
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -751,6 +965,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JS高级程序设计</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">es6-promise</a>
               </li>
             
             <div class="clearfix"></div>

@@ -16,7 +16,7 @@
 <meta property="og:description" content="关于事件的一些总结1. 事件捕获和冒泡事件捕获和冒泡是事件触发后的不同阶段. 事件捕获是指不大具体的节点更早接收到事件, 最具体的节点应该最后接收到事件. 而事件冒泡则相反. 现代浏览器都支持事件捕获和事件冒泡两种机制. 更常见的, 我们会在冒泡节点对事件进行处理. 2. 事件跨浏览器兼容说跨浏览器兼容之前, 我们先说一说事件处理程序: ① HTML事件处理程序&lt;input type&#x3D;&amp;qu">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-11-13T13:31:41.000Z">
-<meta property="article:modified_time" content="2020-11-13T16:13:00.019Z">
+<meta property="article:modified_time" content="2020-11-13T17:53:28.676Z">
 <meta property="article:author" content="dchih">
 <meta property="article:tag" content="JS高级程序设计">
 <meta name="twitter:card" content="summary">
@@ -167,7 +167,7 @@
       
         <h2 id="关于事件的一些总结"><a href="#关于事件的一些总结" class="headerlink" title="关于事件的一些总结"></a><center>关于事件的一些总结</center></h2><h3 id="1-事件捕获和冒泡"><a href="#1-事件捕获和冒泡" class="headerlink" title="1. 事件捕获和冒泡"></a>1. 事件捕获和冒泡</h3><p>事件捕获和冒泡是事件触发后的不同阶段. 事件捕获是指不大具体的节点更早接收到事件, 最具体的节点应该最后接收到事件. 而事件冒泡则相反. 现代浏览器都支持事件捕获和事件冒泡两种机制. 更常见的, 我们会在冒泡节点对事件进行处理.</p>
 <h3 id="2-事件跨浏览器兼容"><a href="#2-事件跨浏览器兼容" class="headerlink" title="2. 事件跨浏览器兼容"></a>2. 事件跨浏览器兼容</h3><p>说跨浏览器兼容之前, 我们先说一说事件处理程序:</p>
-<h4 id="①-HTML事件处理程序"><a href="#①-HTML事件处理程序" class="headerlink" title="① HTML事件处理程序"></a>① HTML事件处理程序</h4><pre><code>&lt;input type=&quot;button&quot; onclick=&quot;alert(&apos;hello：&apos; + event.type)&quot;&gt;</code></pre><h4 id="②-DOM0级事件处理程序"><a href="#②-DOM0级事件处理程序" class="headerlink" title="② DOM0级事件处理程序"></a>② DOM0级事件处理程序</h4><pre><code>let btn = document.getElementById(&apos;button&apos;);
+<h4 id="①-HTML事件处理程序"><a href="#①-HTML事件处理程序" class="headerlink" title="① HTML事件处理程序"></a>① HTML事件处理程序</h4><pre><code>&lt;input type=&quot;button&quot; onclick=&quot;alert(&apos;hello: &apos; + event.type)&quot;&gt;</code></pre><h4 id="②-DOM0级事件处理程序"><a href="#②-DOM0级事件处理程序" class="headerlink" title="② DOM0级事件处理程序"></a>② DOM0级事件处理程序</h4><pre><code>let btn = document.getElementById(&apos;button&apos;);
 btn.onclick = function (event) {
     alert(&apos;hello: &apos; + event.type);
 }</code></pre><h4 id="③-DOM2级事件处理程序"><a href="#③-DOM2级事件处理程序" class="headerlink" title="③ DOM2级事件处理程序"></a>③ DOM2级事件处理程序</h4><p>在此, IE 与其他浏览器实现不同</p>
@@ -294,8 +294,8 @@ btn.detachEvent(type, handler);</code></pre><h4 id="④-Event对象"><a href="#�
             event.cancleBubble = true;
         }
     }
-}</code></pre><h3 id="3-事件类型-事件类型实在太多，-在此只记录本人用过或者感兴趣的"><a href="#3-事件类型-事件类型实在太多，-在此只记录本人用过或者感兴趣的" class="headerlink" title="3. 事件类型(事件类型实在太多， 在此只记录本人用过或者感兴趣的)"></a>3. 事件类型(事件类型实在太多， 在此只记录本人用过或者感兴趣的)</h3><p>DOM3级事件规定了以下类型: UI事件, 焦点事件, 鼠标事件， 滚轮事件， 键盘事件， 文本事件，合成事件，变动事件.<br>① UI 事件</p>
-<pre><code>// load (当页面加载完后触发, 其中包括图像， JS文件， CSS文件等外部资源)
+}</code></pre><h3 id="3-事件类型-事件类型实在太多-在此只记录本人用过或者感兴趣的"><a href="#3-事件类型-事件类型实在太多-在此只记录本人用过或者感兴趣的" class="headerlink" title="3. 事件类型(事件类型实在太多, 在此只记录本人用过或者感兴趣的)"></a>3. 事件类型(事件类型实在太多, 在此只记录本人用过或者感兴趣的)</h3><p>DOM3级事件规定了以下类型: UI事件, 焦点事件, 鼠标事件, 滚轮事件, 键盘事件, 文本事件,合成事件,变动事件.<br>① UI 事件</p>
+<pre><code>// load (当页面加载完后触发, 其中包括图像, JS文件, CSS文件等外部资源)
 &lt;img src=&quot;smile.gif&quot; id=&quot;image&quot;&gt;
 let image = document.getElementById(&quot;image&quot;);
 EventUtil.addHandler(image, &apos;load&apos;, function (event) {
@@ -306,18 +306,18 @@ EventUtil.addHandler(image, &apos;load&apos;, function (event) {
 document.body.appendChild(image);
 image.src = &apos;smile.gif&apos;;
 
-// resize 事件， 在浏览器窗口宽高发生变化时触发
+// resize 事件, 在浏览器窗口宽高发生变化时触发
 
 // scroll 事件</code></pre><p>② 焦点事件</p>
 <pre><code>// blur 和 focus</code></pre><p>③ 鼠标事件  </p>
-<pre><code>// DOM3 定义了 9 个鼠标事件：click, dblclick, mousedown, mouseup, mouseenter, mounseleave, mouseover, mouseout</code></pre><p><strong>取消鼠标事件将会影响浏览器的默认行为</strong>，因为鼠标事件是有触发顺序的：</p>
+<pre><code>// DOM3 定义了 9 个鼠标事件: click, dblclick, mousedown, mouseup, mouseenter, mounseleave, mouseover, mouseout</code></pre><p><strong>取消鼠标事件将会影响浏览器的默认行为</strong>,因为鼠标事件是有触发顺序的: </p>
 <pre><code>(1) mounsedown
 (2) mouseup
 (3) click
 (4) mousedown
 (5) mouseup
 (6) click
-(7) dblclick</code></pre><p>鼠标事件的 event 会包含鼠标位置的值：</p>
+(7) dblclick</code></pre><p>鼠标事件的 event 会包含鼠标位置的值: </p>
 <pre><code>// 客户区坐标位置(相对于视口的top-left)
 event.clientX/event.clientY
 
@@ -325,16 +325,16 @@ event.clientX/event.clientY
 event.pageX/ event.pageY
 
 // 屏幕坐标位置(相对电脑屏幕计算)
-event.screenX/event.screenY</code></pre><p>鼠标 + 修改键：</p>
-<pre><code>event.shiftKey, event.ctrlKey, event.altKey, event.metaKey</code></pre><p>④ 键盘与文本(键盘事件也支持修改键)<br>键盘事件有三个： keydown, keyup, keypress<br>触发键盘事件后， event 的 keyCode 属性会得到一个值. 对数字字母字符键， keyCode 值与 ASCⅡ 码中对应的编码相同.</p>
-<pre><code>// keypress 触发时，event 对象支持一个 charCode 属性， charCode此时的值就是按下键的 ASCⅡ编码
+event.screenX/event.screenY</code></pre><p>鼠标 + 修改键: </p>
+<pre><code>event.shiftKey, event.ctrlKey, event.altKey, event.metaKey</code></pre><p>④ 键盘与文本(键盘事件也支持修改键)<br>键盘事件有三个:  keydown, keyup, keypress<br>触发键盘事件后, event 的 keyCode 属性会得到一个值. 对数字字母字符键, keyCode 值与 ASCⅡ 码中对应的编码相同.</p>
+<pre><code>// keypress 触发时,event 对象支持一个 charCode 属性, charCode此时的值就是按下键的 ASCⅡ编码
 EventUtil = {
     // ...
     getCharCode: function (event) {
         return typeof event.charCode == &apos;number&apos; ? event.charCode : event.keyCode;
     }
-}</code></pre><h3 id="4-事件委托"><a href="#4-事件委托" class="headerlink" title="4. 事件委托"></a>4. 事件委托</h3><p>① 内存和性能： 在JS中， 添加到页面的事件处理程序数量直接关系到页面的性能。原因有二： 其一， 函数都是对象， 会占用内存， 内存中对象越多，性能越差;  其二, 指定事件处理程序时的DOM访问导致性能变差。</p>
-<p>② 事件委托：事件委托可以对上述两个问题进行优化</p>
+}</code></pre><h3 id="4-事件委托"><a href="#4-事件委托" class="headerlink" title="4. 事件委托"></a>4. 事件委托</h3><p>① 内存和性能:  在JS中, 添加到页面的事件处理程序数量直接关系到页面的性能.原因有二:  其一, 函数都是对象, 会占用内存, 内存中对象越多,性能越差;  其二, 指定事件处理程序时的DOM访问导致性能变差.</p>
+<p>② 事件委托: 事件委托可以对上述两个问题进行优化</p>
 <pre><code>&lt;ul id = &quot;myLinks&quot;&gt;
     &lt;li id= &quot;l1&quot;&gt;1&lt;/li&gt;
     &lt;li id= &quot;l2&quot;&gt;3&lt;/li&gt;
@@ -357,7 +357,7 @@ EventUtil.addHandler(list, &apos;click&apos;, function (event) {
         alert(&quot;hi&quot;);
         break;
     }
-})</code></pre><p>我们之所以能够事件委托， 是因为事件的冒泡机制。 事件会一直向上传递到 document 对象， 所以所有的事件触发以后我们都能在最上面的元素中得到处理。</p>
+})</code></pre><p>我们之所以能够事件委托, 是因为事件的冒泡机制. 事件会一直向上传递到 document 对象, 所以所有的事件触发以后我们都能在最上面的元素中得到处理.</p>
 
       
 
@@ -452,6 +452,15 @@ EventUtil.addHandler(list, &apos;click&apos;, function (event) {
   
 <nav id="article-nav">
   
+    <a href="/Blog/2020/11/23/binarytree/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          binarytree
+        
+      </div>
+    </a>
+  
   
     <a href="/Blog/2020/11/13/DOM%E6%80%BB%E7%BB%93/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">DOM总结</div>
@@ -497,7 +506,7 @@ EventUtil.addHandler(list, &apos;click&apos;, function (event) {
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2020 dchih
+    		&copy; 2021 dchih
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -577,6 +586,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">JS高级程序设计</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">es6-promise</a>
               </li>
             
             <div class="clearfix"></div>

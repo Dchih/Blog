@@ -142,6 +142,94 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-gitLocal" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Blog/2021/02/19/gitLocal/">gitLocal</a>
+    </h1>
+  
+
+        
+        <a href="/Blog/2021/02/19/gitLocal/" class="archive-article-date">
+  	<time datetime="2021-02-18T17:37:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Git-常见好用的本地命令"><a href="#Git-常见好用的本地命令" class="headerlink" title=" Git 常见好用的本地命令 "></a><center> Git 常见好用的本地命令 </center></h2><h3 id="1-git-rebase-branchName"><a href="#1-git-rebase-branchName" class="headerlink" title="1, git rebase branchName"></a>1, git rebase branchName</h3><p>该命令将新建一条提交记录, 并把当前工作的分支合并到 branchName 所在的分支. branchName 和 main 两个分支指针还是会指向之前所在的提交记录.</p>
+<h3 id="2-git-reset-git-revert"><a href="#2-git-reset-git-revert" class="headerlink" title="2, git reset / git revert"></a>2, git reset / git revert</h3><p>这两个命令都是撤销变更, git reset 会删除当前最新提交, 并将分支名指向删除分支的父分支. git revert 不会删除当前分支, 反之, 他会创建一个新的提交记录, 而之前的记录也会保存在分支树中</p>
+<h3 id="3-HEAD-指针和分支指针"><a href="#3-HEAD-指针和分支指针" class="headerlink" title="3, HEAD 指针和分支指针"></a>3, HEAD 指针和分支指针</h3><p>在 git bash 命令行终端我们常常会在路径后面见到 master , 这个 master 就是一个分支指针. 不过他比较特殊, 是主分支. 而 HEAD 却很少见到. 其实 HEAD 和 分支指针的关系一般为 HEAD -&gt; 分支指针. HEAD 指针指向的是当前工作的记录. 当然 HEAD 是可以分离开指向其他提交记录的.</p>
+<h3 id="4-git-branch-f-branchName-HEAD-num"><a href="#4-git-branch-f-branchName-HEAD-num" class="headerlink" title="4,  git branch -f branchName HEAD~num"></a>4,  git branch -f branchName HEAD~num</h3><p>将分支指针强制前移 num 步</p>
+<center> 未完待续...</center>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">git</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/Blog/categories/local-command//" class="article-tag-list-link color4">local command</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/Blog/2021/02/19/gitLocal/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-PromiseObject" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -314,7 +402,8 @@ p.then(...)</code></pre><p>以上大概就是我在学习Promise链式调用的�
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h1 id="根据中序遍历构建一颗二叉树"><a href="#根据中序遍历构建一颗二叉树" class="headerlink" title=" 根据中序遍历构建一颗二叉树 "></a><center> 根据中序遍历构建一颗二叉树 </center></h1><p>在学习二叉树得过程中, 我接触比较多的是二叉树的遍历, 而对于二叉树的创建或者重建则知之甚少.</p>
+
       
 
       
@@ -322,7 +411,29 @@ p.then(...)</code></pre><p>以上大概就是我在学习Promise链式调用的�
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">tree</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/Blog/categories/data-structure-algorithm//" class="article-tag-list-link color2">data structure & algorithm</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
 
       
         <p class="article-more-link">
@@ -969,6 +1080,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">es6-promise</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">tree</a>
               </li>
             
             <div class="clearfix"></div>

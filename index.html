@@ -142,6 +142,186 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-image-poll" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Blog/2021/09/16/image-poll/">image-poll</a>
+    </h1>
+  
+
+        
+        <a href="/Blog/2021/09/16/image-poll/" class="archive-article-date">
+  	<time datetime="2021-09-15T16:13:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-09-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="图片轮询"><a href="#图片轮询" class="headerlink" title="图片轮询"></a><center>图片轮询</center></h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="在做项目的时候遇到了一个这样的情景-用户在前台输入了表单-下方有一个-“预览”-的按钮"><a href="#在做项目的时候遇到了一个这样的情景-用户在前台输入了表单-下方有一个-“预览”-的按钮" class="headerlink" title="在做项目的时候遇到了一个这样的情景, 用户在前台输入了表单, 下方有一个 “预览” 的按钮."></a>在做项目的时候遇到了一个这样的情景, 用户在前台输入了表单, 下方有一个 “预览” 的按钮.</h3><h3 id="用户点击预览后-数据传到后台生成一份word特殊表格类型的文档-也许会有人问为什么不用在线office编辑呢-emmm这是个很现实的问题"><a href="#用户点击预览后-数据传到后台生成一份word特殊表格类型的文档-也许会有人问为什么不用在线office编辑呢-emmm这是个很现实的问题" class="headerlink" title="用户点击预览后, 数据传到后台生成一份word特殊表格类型的文档. (也许会有人问为什么不用在线office编辑呢, emmm这是个很现实的问题)"></a>用户点击预览后, 数据传到后台生成一份word特殊表格类型的文档. (也许会有人问为什么不用在线office编辑呢, emmm这是个很现实的问题)</h3><h3 id="既然用户想要预览-我又不能整出个在线office-辣么只能用图片大法啦"><a href="#既然用户想要预览-我又不能整出个在线office-辣么只能用图片大法啦" class="headerlink" title="既然用户想要预览, 我又不能整出个在线office, 辣么只能用图片大法啦~"></a>既然用户想要预览, 我又不能整出个在线office, 辣么只能用图片大法啦~</h3><h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><h3 id="于是乎-后台将转化后的word又转为图片-传到前台来-可问题又来了-后台-python-在转化的时候不能干其他事儿了-那这哪行啊"><a href="#于是乎-后台将转化后的word又转为图片-传到前台来-可问题又来了-后台-python-在转化的时候不能干其他事儿了-那这哪行啊" class="headerlink" title="于是乎, 后台将转化后的word又转为图片, 传到前台来. 可问题又来了, 后台(python)在转化的时候不能干其他事儿了, 那这哪行啊."></a>于是乎, 后台将转化后的word又转为图片, 传到前台来. 可问题又来了, 后台(python)在转化的时候不能干其他事儿了, 那这哪行啊.</h3><p>又于是乎, 后台将转化这个步骤变成了异步. 我数据传到后台, 他先给我一个图片路径, 嘿, 最可恶的是他还只给一个, 给我的理由是他不知道会转化为多少张图片.<br>需要我自己去请求测试. 哎, 话说回来, 我拿到图片路径以后呢, 就不停的请求图片资源: 好了没有啊, 什么时候好啊… 直到这张图片加载成功</p>
+<h2 id="需要用到的知识"><a href="#需要用到的知识" class="headerlink" title="需要用到的知识"></a>需要用到的知识</h2><h3 id="Image"><a href="#Image" class="headerlink" title="Image()"></a>Image()</h3><h4 id="当我们-new-Image-就相当于执行了-document-createElement-‘img’-得到一个图片实例-在这个实例上有如下常用属性"><a href="#当我们-new-Image-就相当于执行了-document-createElement-‘img’-得到一个图片实例-在这个实例上有如下常用属性" class="headerlink" title="当我们 new Image(), 就相当于执行了 document.createElement(‘img’), 得到一个图片实例.在这个实例上有如下常用属性"></a>当我们 new Image(), 就相当于执行了 document.createElement(‘img’), 得到一个图片实例.在这个实例上有如下常用属性</h4><pre><code>img.src // 图片资源, 给其赋值时, 会发出请求
+img.width // 图片展示的宽度
+img.naturalWidth  // 图片本身宽度
+img.height
+img.naturalHeight
+img.complete  // 无论加载失败或是成功, 加载结束就返回 true
+img.onload  // 加载成功事件回调
+img.onerror // 加载失败事件回调</code></pre><h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><pre><code>function loadImage (src) {
+  const img = new Image()
+  img.onload = () =&gt; {
+    // 展示图片
+    testImage(src, 0)
+  }
+  img.onerror = () =&gt; {
+    setTimeout(() =&gt; {
+      loadImage(src)
+    }, 1000)
+  }
+  img.src = src
+}
+
+let arr = []
+// 测试后台生成了多少张图片
+function testImage(src, num) {
+  const img = new Image()
+  arr.push(src)
+  src = src.replace(`/${num}/`, `/${num + 1}/`)
+  img.onload = () =&gt; testImage(src, ++num)
+  img.onerror = () =&gt; {
+    // 展示图片啦
+  }
+  img.src = src
+}</code></pre><h2 id="小插曲"><a href="#小插曲" class="headerlink" title="小插曲"></a>小插曲</h2><h3 id="我在写第二个函数的时候-递归testImage-第二个参数写的是-num-结果递归出死循环-后来发现-num-一直没有增加-于是乎就修改成-num-结果还成了"><a href="#我在写第二个函数的时候-递归testImage-第二个参数写的是-num-结果递归出死循环-后来发现-num-一直没有增加-于是乎就修改成-num-结果还成了" class="headerlink" title="我在写第二个函数的时候, 递归testImage 第二个参数写的是 num ++ . 结果递归出死循环, 后来发现 num 一直没有增加, 于是乎就修改成 ++num, 结果还成了."></a>我在写第二个函数的时候, 递归testImage 第二个参数写的是 num ++ . 结果递归出死循环, 后来发现 num 一直没有增加, 于是乎就修改成 ++num, 结果还成了.</h3><p>究其原因, num++ 是先将num传入函数内, 然后再自加. ++num是先自加再传入函数内. 这也与大学时上课讲的for 循环的控制变量如出一辙.</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="动手写轮询之前以为自己需要花一天时间去完成-结果不到两小时就搞定了-反思了一下-还是觉得自己应该再脚踏实地的基础上-大胆得做-未来加油"><a href="#动手写轮询之前以为自己需要花一天时间去完成-结果不到两小时就搞定了-反思了一下-还是觉得自己应该再脚踏实地的基础上-大胆得做-未来加油" class="headerlink" title="动手写轮询之前以为自己需要花一天时间去完成, 结果不到两小时就搞定了. 反思了一下, 还是觉得自己应该再脚踏实地的基础上, 大胆得做. 未来加油~"></a>动手写轮询之前以为自己需要花一天时间去完成, 结果不到两小时就搞定了. 反思了一下, 还是觉得自己应该再脚踏实地的基础上, 大胆得做. 未来加油~</h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/Blog/categories/工作中遇到的问题//" class="article-tag-list-link color4">工作中遇到的问题</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/Blog/2021/09/16/image-poll/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-decor-model" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Blog/2021/03/02/decor-model/">decor_model</a>
+    </h1>
+  
+
+        
+        <a href="/Blog/2021/03/02/decor-model/" class="archive-article-date">
+  	<time datetime="2021-03-02T07:51:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/Blog/2021/03/02/decor-model/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-gitLocal" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -402,7 +582,7 @@ p.then(...)</code></pre><p>以上大概就是我在学习Promise链式调用的�
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="根据中序遍历构建一颗二叉树"><a href="#根据中序遍历构建一颗二叉树" class="headerlink" title=" 根据中序遍历构建一颗二叉树 "></a><center> 根据中序遍历构建一颗二叉树 </center></h1><p>在学习二叉树得过程中, 我接触比较多的是二叉树的遍历, 而对于二叉树的创建或者重建则知之甚少.</p>
+        <h1 id="根据中序遍历构建一颗二叉树"><a href="#根据中序遍历构建一颗二叉树" class="headerlink" title=" 根据中序遍历构建一颗二叉树 "></a><center> 根据中序遍历构建一颗二叉树 </center></h1><p>在学习二叉树得过程中, 我接触比较多是二叉树的遍历, 而关于二叉树的创建，却谈之甚少. 那么我们为什么要创建二叉树呢？</p>
 
       
 
@@ -1088,6 +1268,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">tree</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
             
             <div class="clearfix"></div>

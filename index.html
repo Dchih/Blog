@@ -142,6 +142,98 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-download-binary-file" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Blog/2021/11/23/download-binary-file/">download-binary-file</a>
+    </h1>
+  
+
+        
+        <a href="/Blog/2021/11/23/download-binary-file/" class="archive-article-date">
+  	<time datetime="2021-11-23T03:01:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="File-Download"><a href="#File-Download" class="headerlink" title="File Download"></a><center>File Download</center></h1><p>在开发中下载文件是一个常见的需求， 下载文件一般分为两种：</p>
+<p>1, 直接打开后台给的URL, 浏览器自动下载一个文件：</p>
+<pre><code>window.open(url)
+// 或者：
+location.href = url</code></pre><p>2, 后台传回文件流, 前端将文件流转为相应的文件格式. 此方法相对于第一种需要多几个步骤进行转化（此处采用axios）</p>
+<pre><code>① 设置前端 request header, 返回前端可以处理的二进制格式 : 
+  contentType: &apos;arraybuffer&apos;
+  or 
+  contentType: &apos;blob&apos;
+
+② 转化： 
+  const URL = window.URL.createObjectURL(res.data);
+  let link = document.createElement(&apos;a&apos;);
+  document.body.appendChild(link);
+  link.style.display = &apos;none&apos;;
+  link.setAttribute(&apos;download&apos;, filename);
+  link.setAttribute(&apos;href&apos;, URL);
+  a.click();
+  window.URL.revokeObjectURL(URL);</code></pre><p>后记： 至于后台为什么要传文件流，我想到的是处于安全的考虑. 不用流的方式处理的话， 可以绕过验证。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">javascript</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/Blog/2021/11/23/download-binary-file/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-image-poll" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1272,6 +1364,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">javascript</a>
               </li>
             
             <div class="clearfix"></div>

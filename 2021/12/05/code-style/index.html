@@ -6,19 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://duzchih.github.io/Blog">
-  <title>gitLocal | Dchih</title>
+  <title>code-style | Dchih</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Git 常见好用的本地命令 1, git rebase branchName该命令将新建一条提交记录, 并把当前工作的分支合并到 branchName 所在的分支. branchName 和 main 两个分支指针还是会指向之前所在的提交记录. 2, git reset &#x2F; git revert这两个命令都是撤销变更, git reset 会删除当前最新提交, 并将分支名指向删除分支的父分支.">
+  <meta name="description" content="代码风格想写这个的灵感来自于一次失败的项目代码管理。很早之前就已经喜欢用一个标志（false&#x2F;true）变量来复用一个页面，希望能少写些代码。这样做的后果是项目到后期标志位变得越来越多不好维护，第二多个页面之间需要多个标志位来确定，增加了template的逻辑复杂度。这看似是两个问题。我们先来假设用一个字符串数组">
 <meta property="og:type" content="article">
-<meta property="og:title" content="gitLocal">
-<meta property="og:url" content="http://duzchih.github.io/Blog/2021/02/19/gitLocal/index.html">
+<meta property="og:title" content="code-style">
+<meta property="og:url" content="http://duzchih.github.io/Blog/2021/12/05/code-style/index.html">
 <meta property="og:site_name" content="Dchih">
-<meta property="og:description" content="Git 常见好用的本地命令 1, git rebase branchName该命令将新建一条提交记录, 并把当前工作的分支合并到 branchName 所在的分支. branchName 和 main 两个分支指针还是会指向之前所在的提交记录. 2, git reset &#x2F; git revert这两个命令都是撤销变更, git reset 会删除当前最新提交, 并将分支名指向删除分支的父分支.">
+<meta property="og:description" content="代码风格想写这个的灵感来自于一次失败的项目代码管理。很早之前就已经喜欢用一个标志（false&#x2F;true）变量来复用一个页面，希望能少写些代码。这样做的后果是项目到后期标志位变得越来越多不好维护，第二多个页面之间需要多个标志位来确定，增加了template的逻辑复杂度。这看似是两个问题。我们先来假设用一个字符串数组">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-02-18T17:37:48.000Z">
-<meta property="article:modified_time" content="2021-02-18T18:46:14.253Z">
+<meta property="article:published_time" content="2021-12-05T08:38:23.000Z">
+<meta property="article:modified_time" content="2021-12-05T08:50:24.462Z">
 <meta property="article:author" content="dchih">
-<meta property="article:tag" content="git">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Dchih" type="application/atom+xml">
@@ -145,31 +144,27 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-gitLocal" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-code-style" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      gitLocal
+      code-style
     </h1>
   
 
         
-        <a href="/Blog/2021/02/19/gitLocal/" class="archive-article-date">
-  	<time datetime="2021-02-18T17:37:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-19</time>
+        <a href="/Blog/2021/12/05/code-style/" class="archive-article-date">
+  	<time datetime="2021-12-05T08:38:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-12-05</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Git-常见好用的本地命令"><a href="#Git-常见好用的本地命令" class="headerlink" title=" Git 常见好用的本地命令 "></a><center> Git 常见好用的本地命令 </center></h2><h3 id="1-git-rebase-branchName"><a href="#1-git-rebase-branchName" class="headerlink" title="1, git rebase branchName"></a>1, git rebase branchName</h3><p>该命令将新建一条提交记录, 并把当前工作的分支合并到 branchName 所在的分支. branchName 和 main 两个分支指针还是会指向之前所在的提交记录.</p>
-<h3 id="2-git-reset-git-revert"><a href="#2-git-reset-git-revert" class="headerlink" title="2, git reset / git revert"></a>2, git reset / git revert</h3><p>这两个命令都是撤销变更, git reset 会删除当前最新提交, 并将分支名指向删除分支的父分支. git revert 不会删除当前分支, 反之, 他会创建一个新的提交记录, 而之前的记录也会保存在分支树中</p>
-<h3 id="3-HEAD-指针和分支指针"><a href="#3-HEAD-指针和分支指针" class="headerlink" title="3, HEAD 指针和分支指针"></a>3, HEAD 指针和分支指针</h3><p>在 git bash 命令行终端我们常常会在路径后面见到 master , 这个 master 就是一个分支指针. 不过他比较特殊, 是主分支. 而 HEAD 却很少见到. 其实 HEAD 和 分支指针的关系一般为 HEAD -&gt; 分支指针. HEAD 指针指向的是当前工作的记录. 当然 HEAD 是可以分离开指向其他提交记录的.</p>
-<h3 id="4-git-branch-f-branchName-HEAD-num"><a href="#4-git-branch-f-branchName-HEAD-num" class="headerlink" title="4,  git branch -f branchName HEAD~num"></a>4,  git branch -f branchName HEAD~num</h3><p>将分支指针强制前移 num 步</p>
-<center> 未完待续...</center>
+        <h1 id="代码风格"><a href="#代码风格" class="headerlink" title="代码风格"></a><center>代码风格</center></h1><h3 id="想写这个的灵感来自于一次失败的项目代码管理。很早之前就已经喜欢用一个标志（false-true）变量来复用一个页面，希望能少写些代码。这样做的后果是项目到后期标志位变得越来越多不好维护，第二多个页面之间需要多个标志位来确定，增加了template的逻辑复杂度。这看似是两个问题。我们先来假设用一个字符串数组"><a href="#想写这个的灵感来自于一次失败的项目代码管理。很早之前就已经喜欢用一个标志（false-true）变量来复用一个页面，希望能少写些代码。这样做的后果是项目到后期标志位变得越来越多不好维护，第二多个页面之间需要多个标志位来确定，增加了template的逻辑复杂度。这看似是两个问题。我们先来假设用一个字符串数组" class="headerlink" title="想写这个的灵感来自于一次失败的项目代码管理。很早之前就已经喜欢用一个标志（false/true）变量来复用一个页面，希望能少写些代码。这样做的后果是项目到后期标志位变得越来越多不好维护，第二多个页面之间需要多个标志位来确定，增加了template的逻辑复杂度。这看似是两个问题。我们先来假设用一个字符串数组"></a>想写这个的灵感来自于一次失败的项目代码管理。很早之前就已经喜欢用一个标志（false/true）变量来复用一个页面，希望能少写些代码。这样做的后果是项目到后期标志位变得越来越多不好维护，第二多个页面之间需要多个标志位来确定，增加了template的逻辑复杂度。这看似是两个问题。我们先来假设用一个字符串数组</h3>
       
 
       
@@ -177,29 +172,7 @@
     <div class="article-info article-info-index">
       
       
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">git</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
       
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/Blog/categories/local-command//" class="article-tag-list-link color4">local command</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
 
       
 
@@ -249,7 +222,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://duzchih.github.io/Blog/2021/02/19/gitLocal/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://duzchih.github.io/Blog/2021/12/05/code-style/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -263,18 +236,18 @@
   
 <nav id="article-nav">
   
-    <a href="/Blog/2021/03/02/decor-model/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/Blog/2022/02/13/validatePackageName/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          decor_model
+          validatePackageName
         
       </div>
     </a>
   
   
-    <a href="/Blog/2020/12/30/PromiseObject/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">PromiseObject</div>
+    <a href="/Blog/2021/11/23/download-binary-file/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">download-binary-file</div>
       <i class="icon-circle-right"></i>
     </a>
   

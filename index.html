@@ -142,6 +142,296 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-validatePackageName" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Blog/2022/02/13/validatePackageName/">validatePackageName</a>
+    </h1>
+  
+
+        
+        <a href="/Blog/2022/02/13/validatePackageName/" class="archive-article-date">
+  	<time datetime="2022-02-13T14:56:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-02-13</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="notes-of-validate-npm-package-name"><a href="#notes-of-validate-npm-package-name" class="headerlink" title="notes of validate-npm-package-name"></a>notes of validate-npm-package-name</h1><h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><p>1, warnings &amp; errors 保存检验过程中的的错误或警告， 作为获取检验结果的判断条件</p>
+<p>2，if判断是有顺序的，必要条件，name必须为字符串（因为后续检验都在字符串的基础上进行）条件不满足直接return</p>
+<p>3，黑名单</p>
+<h3 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> scopedPackagePattern = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">'^(?:@([^/]+?)[/])?([^/]+?)$'</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="正则的定义方式"><a href="#正则的定义方式" class="headerlink" title="正则的定义方式"></a>正则的定义方式</h4><p>有两种：</p>
+<p><code>1, new RegExp</code></p>
+<p><code>2, /expr/flag</code></p>
+<p>用正则字面量与用 <code>RegExp()</code> 创建出来的正则表达式是完全一样的，但 <code>RegExp</code> 可以动态创建正则表达式。所以在某些应用方面， <code>RegExp</code> 更为灵活。</p>
+<h4 id="正则的语法"><a href="#正则的语法" class="headerlink" title="正则的语法"></a>正则的语法</h4><h5 id="1，-字面量字符"><a href="#1，-字面量字符" class="headerlink" title="1， 字面量字符"></a>1， 字面量字符</h5><table>
+<thead>
+<tr>
+<th align="center">字符</th>
+<th align="center">自身</th>
+<th align="center">code</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>\0</code></td>
+<td align="center"><code>NUL</code></td>
+<td align="center"><code>\u0000</code></td>
+</tr>
+<tr>
+<td align="center"><code>\t</code></td>
+<td align="center">制表符</td>
+<td align="center"><code>\u0000</code></td>
+</tr>
+<tr>
+<td align="center"><code>\n</code></td>
+<td align="center">换行符</td>
+<td align="center"><code>\000A</code></td>
+</tr>
+<tr>
+<td align="center"><code>\v</code></td>
+<td align="center">垂直制表符</td>
+<td align="center"><code>\u000B</code></td>
+</tr>
+<tr>
+<td align="center"><code>\f</code></td>
+<td align="center">进纸符</td>
+<td align="center"><code>\u000C</code></td>
+</tr>
+<tr>
+<td align="center"><code>\r</code></td>
+<td align="center">回车符</td>
+<td align="center"><code>\u000D</code></td>
+</tr>
+<tr>
+<td align="center"><code>\xnn</code></td>
+<td align="center">十六进制数值指定的拉丁字符</td>
+<td align="center"><code>\x0A</code>即 <code>\n</code></td>
+</tr>
+<tr>
+<td align="center"><code>\uxxxx</code></td>
+<td align="center">十六进制数值 xxxx 指定的Unicode字符</td>
+<td align="center"><code>\u0009</code>即 <code>\t</code></td>
+</tr>
+</tbody></table>
+<p>某些英文标点在正则表达式中具有特殊含义，若记不清可<em>在所有英文标点符号字符前加斜杠</em></p>
+<h6 id="2，-字符类"><a href="#2，-字符类" class="headerlink" title="2， 字符类"></a>2， 字符类</h6><p><code>[abc]</code> 匹配 a 、b、c 中 <strong><em>任意</em></strong>  一个字母</p>
+<p>^ 在字符类中表示取反</p>
+<p><strong><em>特例</em></strong>  [\b] 表示退格字符字面值</p>
+<table>
+<thead>
+<tr>
+<th align="center"><code>\w</code></th>
+<th align="center"><code>[a-zA-Z0-9]</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>\W</code></td>
+<td align="center"><code>[^a-zA-Z0-9]</code></td>
+</tr>
+<tr>
+<td align="center"><code>\s</code></td>
+<td align="center">unicode 空白字符</td>
+</tr>
+<tr>
+<td align="center"><code>\S</code></td>
+<td align="center">非 unicode 空白字符</td>
+</tr>
+<tr>
+<td align="center"><code>\d</code></td>
+<td align="center"><code>[0-9]</code></td>
+</tr>
+<tr>
+<td align="center"><code>\D</code></td>
+<td align="center"><code>[^0-9]</code></td>
+</tr>
+</tbody></table>
+<h5 id="3-，-重复"><a href="#3-，-重复" class="headerlink" title="3 ， 重复"></a>3 ， 重复</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;n,m&#125;	<span class="comment">// 匹配n 到 m 个</span></span><br><span class="line">&#123;n, &#125;    <span class="comment">// 匹配大于 n个</span></span><br><span class="line">&#123;n&#125;	<span class="comment">// 匹配恰好 n 个</span></span><br><span class="line">?	<span class="comment">// &#123;0, 1&#125;</span></span><br><span class="line">+	<span class="comment">// &#123;1, &#125;</span></span><br><span class="line">*	<span class="comment">// &#123;0, &#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>重复匹配中有两种模式：</p>
+<h6 id="贪婪模式"><a href="#贪婪模式" class="headerlink" title="贪婪模式"></a>贪婪模式</h6><p>正则表达式默认是贪婪模式，上表中的重复字符会尽可能多地匹配。也允许剩余的部分继续匹配。</p>
+<h6 id="非贪婪模式"><a href="#非贪婪模式" class="headerlink" title="非贪婪模式"></a>非贪婪模式</h6><p><code>?? +? *?</code> 在重复字符后面加 ? 可以指定非贪婪。</p>
+<p>举个栗子： </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/a+<span class="regexp">/  /</span><span class="regexp">/ 对于字符串 `aaa` 匹配 aaa</span></span><br><span class="line"><span class="regexp">/</span>a+?<span class="regexp">/ /</span><span class="regexp">/ 对于字符串 `aaa` 匹配 a</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>非贪婪并非指匹配更少的重复项， 而是指更少地去匹配</em></strong></p>
+<p>再举个栗子： </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/a+b/ <span class="comment">// 对于字符串 `aaab` 匹配 aaab</span></span><br><span class="line">/a+?b/ <span class="comment">// 对于字符串 `aaab` 也是匹配 aaab</span></span><br></pre></td></tr></table></figure>
+
+<p>分析： <code>/a+/</code> 匹配 ‘aaa’ 的时候，第一个 ‘a’ 是最先匹配到的, 所以 <code>/a+?/</code> 会取第一个匹配到的值，然后停止匹配。而对于 <code>/a+?b/</code> 匹配 ‘aaab’ 的时候 ‘aaab’ 是 <code>/a+?b/</code> 的第一个匹配，所以匹配到后自然其值为 ‘aaab’</p>
+<h5 id="4，任选-分组-和引用"><a href="#4，任选-分组-和引用" class="headerlink" title="4，任选 分组 和引用"></a>4，任选 分组 和引用</h5><p>竖线字符 | 用于分隔任选模式。任选模式从左到右匹配，左边一旦匹配到，即使右边有更好的匹配结果也会被忽略。</p>
+<p>圆括号可以用来分组，也可以用来定义子模式</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/java(script)?<span class="regexp">/	/</span><span class="regexp">/ 匹配 java 后面 script 可选</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span>[a-z]+\d+<span class="regexp">/	/</span><span class="regexp">/ 匹配小写字母后面跟多个数字</span></span><br><span class="line"><span class="regexp">/</span>[a-z]+(\d+)/ <span class="comment">// 这样可以提取出数字项	①</span></span><br></pre></td></tr></table></figure>
+
+<p>上面代码①处， 我们可以用 \1 表示第一个分组，分组是按照左括弧地位置排序。若我们在后面用到重复的表达式， 我们便可以使用 <em>\n</em>  来代替该重复表达式</p>
+<p>有时候我们会觉得数左括弧太麻烦了，于是我们又有了一种更加便捷地方式取到我们想要的子表达式 – 命名捕获组</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(?<span class="xml"><span class="tag">&lt;<span class="name">name</span>&gt;</span>)</span></span><br><span class="line"><span class="xml"> // 美国邮件地址最后一行格式:</span></span><br><span class="line"> /(?&lt;city&gt;\w+) (?&lt;state&gt;[A-Z]&#123;2&#125;) (?&lt;zipcode&gt;\d&#123;5&#125;)(?&lt;zip9&gt;-\d&#123;4&#125;)/</span><br></pre></td></tr></table></figure>
+
+<h5 id="5，指定匹配位置"><a href="#5，指定匹配位置" class="headerlink" title="5，指定匹配位置"></a>5，指定匹配位置</h5><table>
+<thead>
+<tr>
+<th align="center">字符</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">^</td>
+<td align="center">匹配字符串开头</td>
+</tr>
+<tr>
+<td align="center">$</td>
+<td align="center">匹配字符串结尾</td>
+</tr>
+<tr>
+<td align="center">\b</td>
+<td align="center">匹配单词边界</td>
+</tr>
+<tr>
+<td align="center">\B</td>
+<td align="center">匹配非单词边界</td>
+</tr>
+<tr>
+<td align="center">（?&lt;p）</td>
+<td align="center">肯定式向前查找断言</td>
+</tr>
+<tr>
+<td align="center">（?=p）</td>
+<td align="center">否定式向后查找断言</td>
+</tr>
+</tbody></table>
+<h5 id="6，flag"><a href="#6，flag" class="headerlink" title="6，flag"></a>6，flag</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">g &#x2F;&#x2F; 全局匹配</span><br><span class="line">i &#x2F;&#x2F; 不区分大小写</span><br><span class="line">m &#x2F;&#x2F; multiple 多行</span><br><span class="line">s &#x2F;&#x2F; 与 m 类似 （可能有兼容性问题）ES2020</span><br><span class="line">u &#x2F;&#x2F; unicode 让正则匹配完整码点而不是匹配16位值 ES6</span><br><span class="line">y &#x2F;&#x2F; sticky 在调用 match() 和 exec() ，强制将后续匹配的开始位置定位在上一个匹配后面</span><br></pre></td></tr></table></figure>
+
+<p>以上六个标志可以任意混合，不分先后顺序。</p>
+<h5 id="7，RegExp-的几个重要属性"><a href="#7，RegExp-的几个重要属性" class="headerlink" title="7，RegExp 的几个重要属性"></a>7，RegExp 的几个重要属性</h5><p>flags    // 第六点中的 flag</p>
+<p>lastIndex    // 可读写。用于指定下一次匹配的开始位置。配合 exec() 实现强大效果（exec匹配一次返回匹配项的完整信息）。</p>
+<h5 id="8，解析正则"><a href="#8，解析正则" class="headerlink" title="8，解析正则"></a>8，解析正则</h5><p>我们来看到开头的这行代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> scopedPackagePattern = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">'^(?:@([^/]+?)[/])?([^/]+?)$'</span>)</span><br></pre></td></tr></table></figure>
+
+<p><code>(?:@([^/]+?)</code> 中 <code>(?:)</code> 表示此匹配分组只匹配，不会记住分组的字符</p>
+<p><code>@([^/]+?)</code> @ 符号后面匹配多个非斜杠字符一次，即 @abcd/ 会匹配到 @abcd</p>
+<p>所以此正则即 匹配 @scope/package</p>
+<h5 id="9，总结"><a href="#9，总结" class="headerlink" title="9，总结"></a>9，总结</h5><p>上文对正则做了一些比较全面的结构性摘要，其中还有 查找断言 没有写清楚，之后补上。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">RegExp</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/Blog/2022/02/13/validatePackageName/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-code-style" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Blog/2021/12/05/code-style/">code-style</a>
+    </h1>
+  
+
+        
+        <a href="/Blog/2021/12/05/code-style/" class="archive-article-date">
+  	<time datetime="2021-12-05T08:38:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-12-05</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="代码风格"><a href="#代码风格" class="headerlink" title="代码风格"></a><center>代码风格</center></h1><h3 id="想写这个的灵感来自于一次失败的项目代码管理。很早之前就已经喜欢用一个标志（false-true）变量来复用一个页面，希望能少写些代码。这样做的后果是项目到后期标志位变得越来越多不好维护，第二多个页面之间需要多个标志位来确定，增加了template的逻辑复杂度。这看似是两个问题。我们先来假设用一个字符串数组"><a href="#想写这个的灵感来自于一次失败的项目代码管理。很早之前就已经喜欢用一个标志（false-true）变量来复用一个页面，希望能少写些代码。这样做的后果是项目到后期标志位变得越来越多不好维护，第二多个页面之间需要多个标志位来确定，增加了template的逻辑复杂度。这看似是两个问题。我们先来假设用一个字符串数组" class="headerlink" title="想写这个的灵感来自于一次失败的项目代码管理。很早之前就已经喜欢用一个标志（false/true）变量来复用一个页面，希望能少写些代码。这样做的后果是项目到后期标志位变得越来越多不好维护，第二多个页面之间需要多个标志位来确定，增加了template的逻辑复杂度。这看似是两个问题。我们先来假设用一个字符串数组"></a>想写这个的灵感来自于一次失败的项目代码管理。很早之前就已经喜欢用一个标志（false/true）变量来复用一个页面，希望能少写些代码。这样做的后果是项目到后期标志位变得越来越多不好维护，第二多个页面之间需要多个标志位来确定，增加了template的逻辑复杂度。这看似是两个问题。我们先来假设用一个字符串数组</h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/Blog/2021/12/05/code-style/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-download-binary-file" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1268,7 +1558,7 @@ previousSibling()</code></pre><center> 完 </center>
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2021 dchih
+    		&copy; 2022 dchih
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -1368,6 +1658,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">javascript</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">RegExp</a>
               </li>
             
             <div class="clearfix"></div>
